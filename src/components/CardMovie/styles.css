@@ -1,0 +1,42 @@
+.card {
+  display: grid;
+  justify-content: center;
+
+  grid-template-areas:
+    'img title '
+    'img description';
+  margin-bottom: 30px;
+}
+
+.card.disable {
+  display: none;
+}
+
+.card img {
+  width: 175px;
+  height: 243px;
+  grid-area: img;
+  margin-right: 34px;
+  border-style: none;
+}
+
+.card strong {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 30px;
+
+  color: #fffcf9;
+
+  grid-area: title;
+}
+
+.card p {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+
+  width: 423px;
+
+  color: #fffcf9;
+  grid-area: description;
+}
