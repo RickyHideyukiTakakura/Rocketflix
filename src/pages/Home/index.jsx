@@ -1,51 +1,37 @@
-import React, { useState } from 'react'
-
-import './styles.css'
-
-import { CardMovie } from '../../components/CardMovie'
-import shuffleIcon from '../../assets/shuffle.svg'
-import posterImg from '../../assets/code.svg'
+import './styles.css';
+import React, { useState } from 'react';
+import { CardMovie } from '../../components/CardMovie';
+import { getMovie } from '../../services/movieService';
+import shuffleIcon from '../../assets/shuffle.svg';
+import posterImg from '../../assets/code.svg';
 
 export function Home() {
-  const [movie, setMovie] = useState()
+  const [movie, setMovie] = useState();
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
-  function getMovie() {
-    const randomMovie = Math.floor(Math.random() * 1000)
-    const API_KEY = 'api_key=939e096e7e9b8a049aab66733f4d9f7f'
-    const BASE_URL = 'https://api.themoviedb.org/3/movie/'
-    const IMG_URL = 'https://image.tmdb.org/t/p/w500'
+  async function handleNewMovieClick() {
+    const randomMovie = Math.floor(Math.random() * 1000);
+    const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
-    function manageErrors(response) {
-      if (!response.ok) {
-        if (response.status == 404) {
-          setLoading(false)
-          setMovie({
-            image: posterImg,
-            title: '',
-            description: 'Ops, hoje não é dia de assistir filme. Bora codar! 🚀'
-          })
-        }
-        return
-      }
-      return response
+    setLoading(true);
+
+    try {
+      const response = await getMovie(randomMovie);
+      setMovie({
+        image: IMG_URL + response.data.poster_path,
+        title: response.data.original_title,
+        description: response.data.overview
+      });
+    } catch (err) {
+      setMovie({
+        image: posterImg,
+        title: '',
+        description: 'Ops, hoje não é dia de assistir filme. Bora codar! 🚀'
+      });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(true)
-
-    fetch(`${BASE_URL}${randomMovie}?${API_KEY}`)
-      .then(manageErrors)
-      .then(response => response.json())
-      .then(data => {
-        setLoading(false)
-        setMovie({
-          image: IMG_URL + data.poster_path,
-          title: data.original_title,
-          description: data.overview
-        })
-      })
-      .catch(error => console.log(error))
   }
 
   return (
@@ -66,7 +52,7 @@ export function Home() {
           </div>
         )
       )}
-      <button onClick={getMovie} type="button">
+      <button onClick={handleNewMovieClick} type="button">
         <img src={shuffleIcon} alt="" />
         Encontrar filme
       </button>
@@ -75,5 +61,5 @@ export function Home() {
         você assistir hoje
       </p>
     </div>
-  )
+  );
 }
